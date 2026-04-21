@@ -1,8 +1,42 @@
 import streamlit as st
 import pandas as pd
 from google.cloud import bigquery
+from google.oauth2 import service_account
 import os
+import json
 from datetime import datetime
+
+# ==========================================
+# 1. AUTENTICACIÓN SHARKFLOW (NUBE VS LOCAL)
+# ==========================================
+
+# Intentar cargar desde los Secrets de Streamlit (Modo Nube)
+if "gcp_service_account" in st.secrets:
+    try:
+        # Convertimos el diccionario de secretos a un formato que Google entienda
+        info = dict(st.secrets["gcp_service_account"])
+        # IMPORTANTE: Reemplazar los saltos de línea literales en la llave privada
+        if "private_key" in info:
+            info["private_key"] = info["private_key"].replace("\\n", "\n")
+            
+        credentials = service_account.Credentials.from_service_account_info(info)
+        client = bigquery.Client(credentials=credentials, project=info["project_id"])
+        print("✅ Conectado usando Streamlit Secrets (Nube)")
+    except Exception as e:
+        st.error(f"Error en los Secrets de la nube: {e}")
+        st.stop()
+
+# Si no hay secretos, buscar el archivo local (Modo Local)
+else:
+    ruta_local = "secrets/google_key.json"
+    if os.path.exists(ruta_local):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ruta_local
+        client = bigquery.Client()
+        print("💻 Conectado usando archivo local JSON")
+    else:
+        st.error("❌ No se encontraron credenciales (ni Secrets ni archivo JSON).")
+        st.stop()
+
 
 # ==========================================
 # 1. CONFIGURACIÓN DEL ENTORNO SHARKFLOW
