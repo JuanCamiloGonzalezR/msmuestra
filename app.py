@@ -50,7 +50,6 @@ DATASET_ID = "finanzas"
 TABLE_ID = "cuentas_por_pagar"
 FULL_TABLE_PATH = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}"
 
-client = bigquery.Client()
 
 # ==========================================
 # 2. CONEXIÓN A DATOS
