@@ -1,0 +1,9 @@
+data/
+.DS_Store
+.ipynb_checkpoints
+secrets/
+*.json
+.streamlit/
+__pycache__/
+venv/
+.DS_Store
