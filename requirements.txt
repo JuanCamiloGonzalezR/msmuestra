@@ -1,0 +1,8 @@
+streamlit
+pandas
+google-cloud-bigquery
+google-auth
+pandas-gbq
+pyarrow
+openpyxl
+db-dtypes
